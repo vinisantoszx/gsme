@@ -4,25 +4,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criar Subordinado - Gerenciador de OS</title>
+    <title>Gerenciador SME - Criar Login</title>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Oswald:wght@200..700&family=Radio+Canada:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
+
 </head>
 <body class="login-body">
     <nav class="main-menu">
-        <a href="{{ url_for('admin_dashboard') }}"><img src="https://placehold.co/100x60/9acd32/ffffff?text=LOGO" alt="logo-sme" class="image-logo"></a>
+        <a href="{{ url_for('admin_dashboard') }}"><img src="{{ url_for('static', filename='img/1.png') }}" alt="logo-sme" class="image-logo"></a>
         <div class="mobile-menu">
             <div class="line1"></div>
             <div class="line2"></div>
             <div class="line3"></div>
         </div>
         <ul class="nav-list">
-            <li><a href="{{ url_for('admin_dashboard') }}" class="link-nav">Dashboard Admin</a></li>
+            <li><a href="{{ url_for('admin_dashboard') }}" class="link-nav">Painel Principal</a></li>
             <li><a href="{{ url_for('logout') }}" class="link-nav">Sair</a></li>
         </ul>
     </nav>
 
     <div class="login-container"> <!-- Reutilizando o estilo do container de login para o formulário -->
-        <h1>Criar Novo Subordinado</h1>
+        <h1>Criar Novo Usuário</h1>
         
         <!-- Mensagens Flash (sucesso, erro, info) -->
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -36,15 +42,15 @@
         {% endwith %}
 
         <form action="/admin/create_subordinate" method="post">
-            <label for="username">Usuário do Subordinado:</label>
+            <label for="username">Usuário:</label>
             <input type="text" id="username" name="username" required>
             
-            <label for="password">Senha do Subordinado:</label>
+            <label for="password">Senha:</label>
             <input type="password" id="password" name="password" required>
             
-            <button type="submit">Criar Subordinado</button>
+            <button type="submit">Criar Usuário</button>
         </form>
-        <p class="switch-link"><a href="{{ url_for('admin_dashboard') }}">Voltar para a Dashboard</a></p>
+        <p class="switch-link"><a href="{{ url_for('admin_dashboard') }}">Voltar para o Painel Principal</a></p>
     </div>
 
     <script>

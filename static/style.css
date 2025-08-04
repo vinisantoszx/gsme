@@ -350,6 +350,28 @@ tr.entregue-a-tempo {
     text-decoration: underline;
 }
 
+.filter-form {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espaço entre o texto e o seletor */
+    margin-top: 15px;
+    margin-bottom: 25px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    flex-wrap: wrap; /* Garante que funcione bem em telas pequenas */
+}
+
+.filter-form label {
+    margin-bottom: 0; /* Remove a margem que labels geralmente têm */
+    font-weight: 600;
+}
+
+.filter-form select {
+    min-width: 250px; /* Largura mínima para o seletor */
+}
+
 /* --- ESTILOS DA BARRA DE NAVEGAÇÃO --- */
 .main-menu {
     width: 100%; /* Garante que ocupe a largura total */

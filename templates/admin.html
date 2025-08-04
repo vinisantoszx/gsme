@@ -4,12 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciador SME - Dashboard</title>
+    <title>Gerenciador SME - Painel Principal</title>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Oswald:wght@200..700&family=Radio+Canada:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
+
 </head>
 <body>
     <nav class="main-menu">
@@ -29,7 +31,6 @@
         <h1>Painel Principal</h1>
         <p class="welcome-message">Bem-vindo, {{ session.username }}! (<a href="/logout">Sair</a>)</p>
 
-        <!-- Mensagens Flash (sucesso, erro, info) -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <ul class="flashes">
@@ -41,7 +42,6 @@
         {% endwith %}
 
         <div class="content-wrapper">
-            <!-- Seção para VOCÊ (Vinícius) - Gerenciador de Pedidos -->
             <div class="section manager-section">
                 <h2>Criar Nova Ordem de Serviço</h2>
                 <form action="/adicionar_ordem" method="post">
@@ -53,7 +53,7 @@
 
                     <label for="assigned_to_username">Atribuir a:</label>
                     <select id="assigned_to_username" name="assigned_to_username" required>
-                        <option value="">Selecione um subordinado</option>
+                        <option value="">Selecione um usuário</option>
                         {% for sub in subordinates %}
                         <option value="{{ sub }}">{{ sub }}</option>
                         {% endfor %}
@@ -61,57 +61,69 @@
                     
                     <button type="submit">Criar Nova Ordem</button>
                 </form>
-
-                <hr>
-
-                <!-- Botão para ir para a página de criação de subordinados -->
-                <h2 style="margin-bottom: 15px;">Gerenciar Subordinados</h2>
-                <a href="{{ url_for('create_subordinate_page') }}" class="button" style="display: block; text-align: center; margin-bottom: 20px;">Criar Novo Subordinado</a>
             </div>
-
-            <!-- Seção de Visualização de Ordens para o Admin -->
-            <div class="section admin-orders-view">
-                <h2>Todas as Ordens de Serviço</h2>
-                {% if ordens %}
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Descrição</th>
-                                <th>Prazo</th>
-                                <th>Atribuído a</th>
-                                <th>Status</th>
-                                <th>Anexo</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for ordem in ordens %}
-                            <tr class="{{ ordem.status_class }}">
-                                <td>{{ ordem.id }}</td>
-                                <td>{{ ordem.descricao }}</td>
-                                <td>{{ ordem.prazo }}</td>
-                                <td>{{ ordem.assigned_to_username or 'Não atribuído' }}</td>
-                                <td>{{ ordem.status }}</td>
-                                <td>
-                                    {% if ordem.download_link %}
-                                        <a href="{{ ordem.download_link }}" target="_blank">Baixar Arquivo</a>
-                                    {% else %}
-                                        N/A
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <a href="/deletar_ordem/{{ ordem.id }}" class="button delete-button" 
-                                       onclick="return confirm('Tem certeza que deseja deletar esta ordem de serviço?');">Deletar</a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                {% else %}
-                    <p>Nenhuma ordem de serviço cadastrada ainda.</p>
-                {% endif %}
+            
+            <div class="section">
+                <h2 style="margin-bottom: 15px;">Gerenciar Usuários</h2>
+                <a href="{{ url_for('create_subordinate_page') }}" class="button" style="display: block; text-align: center; margin-bottom: 20px;">Criar Novo Usuário</a>
             </div>
+        </div>
+
+        <hr> <div class="section admin-orders-view">
+            <h2>Todas as Ordens de Serviço</h2>
+
+            <form method="get" action="{{ url_for('admin_dashboard') }}" class="filter-form">
+                <label for="subordinate-filter">Filtrar por Usuário:</label>
+                <select name="subordinate" id="subordinate-filter" onchange="this.form.submit()">
+                    <option value="">-- Todos --</option>
+                    {% for sub in subordinates %}
+                        <option value="{{ sub }}" {% if sub == selected_sub %}selected{% endif %}>
+                            {{ sub }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <noscript><button type="submit">Filtrar</button></noscript>
+            </form>
+
+            {% if ordens %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Descrição</th>
+                            <th>Prazo</th>
+                            <th>Atribuído a</th>
+                            <th>Status</th>
+                            <th>Anexo</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ordem in ordens %}
+                        <tr class="{{ ordem.status_class }}">
+                            <td>{{ ordem.id }}</td>
+                            <td>{{ ordem.descricao }}</td>
+                            <td>{{ ordem.prazo }}</td>
+                            <td>{{ ordem.assigned_to_username or 'Não atribuído' }}</td>
+                            <td>{{ ordem.status }}</td>
+                            <td>
+                                {% if ordem.download_link %}
+                                    <a href="{{ ordem.download_link }}" target="_blank">Baixar Arquivo</a>
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="/deletar_ordem/{{ ordem.id }}" class="button delete-button" 
+                                   onclick="return confirm('Tem certeza que deseja deletar esta ordem de serviço?');">Deletar</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Nenhuma ordem de serviço encontrada para o filtro selecionado.</p>
+            {% endif %}
         </div>
     </div>
 

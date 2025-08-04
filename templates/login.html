@@ -4,17 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Gerenciador de OS</title>
+    <title>Gerenciador SME - Login</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Oswald:wght@200..700&family=Radio+Canada:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
+
 </head>
 <body class="login-body">
     <nav class="main-menu">
-        <a href="{{ url_for('home') }}"><img src="https://placehold.co/100x60/9acd32/ffffff?text=LOGO" alt="logo-sme" class="image-logo"></a>
+        <a href="{{ url_for('admin_dashboard') }}"><img src="{{ url_for('static', filename='img/1.png') }}" alt="logo-sme" class="image-logo"></a>
         <ul class="nav-list">
             <li><a href="{{ url_for('register') }}" class="link-nav">Registrar Admin</a></li>
         </ul>

@@ -209,13 +209,32 @@ def register():
 @admin_required
 def admin_dashboard():
     """Painel principal do administrador."""
-    # Busca todas as ordens de serviço no banco de dados.
+    # Pega o subordinado selecionado no filtro da URL, se houver.
+    selected_sub = request.args.get('subordinate')
+
     with get_db_connection() as conn:
-        ordens = conn.execute('SELECT * FROM ordens_servico ORDER BY prazo ASC').fetchall()
+        # Prepara a base da consulta SQL.
+        query = 'SELECT * FROM ordens_servico'
+        params = []
+
+        # Se um subordinado específico foi selecionado no filtro...
+        if selected_sub:
+            # Adiciona a condição WHERE na consulta.
+            query += ' WHERE assigned_to_username = ?'
+            params.append(selected_sub)
+
+        # Adiciona a ordenação por prazo.
+        query += ' ORDER BY prazo ASC'
+
+        # Executa a consulta com os parâmetros (se houver).
+        ordens = conn.execute(query, tuple(params)).fetchall()
+
     # Processa cada ordem para adicionar status_class e download_link.
     ordens_processadas = [processar_ordem(o) for o in ordens]
-    # Mostra a página do painel do admin, passando a lista de ordens e de subordinados.
-    return render_template('admin.html', ordens=ordens_processadas, subordinates=get_subordinates())
+    
+    # Mostra a página, passando a lista de ordens, de subordinados e o subordinado atualmente selecionado no filtro.
+    return render_template('admin.html', ordens=ordens_processadas, subordinates=get_subordinates(), selected_sub=selected_sub)
+
 
 @app.route('/admin/create_subordinate_page')
 @admin_required
