@@ -1,0 +1,77 @@
+<!-- templates/register.html -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar - Gerenciador de OS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="login-body">
+    <nav class="main-menu">
+        <a href="{{ url_for('home') }}"><img src="https://placehold.co/100x60/9acd32/ffffff?text=LOGO" alt="logo-sme" class="image-logo"></a>
+        <div class="mobile-menu">
+            <div class="line1"></div>
+            <div class="line2"></div>
+            <div class="line3"></div>
+        </div>
+        <ul class="nav-list">
+            <li><a href="{{ url_for('login') }}" class="link-nav">Login</a></li>
+        </ul>
+    </nav>
+
+    <div class="login-container">
+        <h1>Registrar Nova Conta</h1>
+        
+        <!-- Mensagens Flash (sucesso, erro, info) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <form action="/register" method="post">
+            <label for="username">Usuário:</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password">Senha:</label>
+            <input type="password" id="password" name="password" required>
+
+            <!-- O tipo de usuário agora é fixo como Administrador nesta página -->
+            <input type="hidden" id="role" name="role" value="admin">
+            
+            <div id="access-key-field">
+                <label for="access_key">Chave de Acesso (Administrador):</label>
+                <input type="password" id="access_key" name="access_key" required>
+            </div>
+
+            <button type="submit">Registrar</button>
+        </form>
+        <p class="switch-link">Já possui uma conta? <a href="{{ url_for('login') }}">Faça Login</a></p>
+    </div>
+
+    <script>
+        // JavaScript para o menu mobile (hambúrguer)
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const navList = document.querySelector('.nav-list');
+        const navLinks = document.querySelectorAll('.nav-list li');
+
+        mobileMenu.addEventListener('click', () => {
+            navList.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+
+            navLinks.forEach((link, index) => {
+                if (link.style.animation) {
+                    link.style.animation = '';
+                } else {
+                    link.style.animation = `navLinkFade 0.5s ease forwards ${index / 7 + 0.3}s`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,551 @@
+/* static/style.css */
+
+/* Reset Básico para garantir consistência entre navegadores */
+*, *::before, *::after {
+    box-sizing: border-box; /* Garante que padding e border sejam incluídos na largura/altura total */
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilos gerais para o corpo da página */
+body {
+    font-family: 'Noto Sans', sans-serif;
+    background-color: #f0f2f5; /* Cor de fundo suave */
+    color: #333;
+    /* Removido padding, display flex e justify-content aqui para permitir que o nav ocupe a largura total */
+    min-height: 100vh; /* Garante que o corpo ocupe toda a altura da viewport */
+}
+
+/* Estilo específico para o corpo da página de login e registro */
+body.login-body {
+    display: flex;
+    flex-direction: column; /* Para alinhar o nav e o container de login */
+    align-items: center; /* Centraliza horizontalmente o container de login/registro */
+    justify-content: flex-start; /* Alinha ao topo para dar espaço ao nav */
+    padding: 0; /* Remove padding extra no body para o nav */
+}
+
+/* Estilo para o container principal do conteúdo (abaixo do nav) */
+.main-container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px; /* Cantos mais arredondados */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra mais pronunciada */
+    width: 100%;
+    max-width: 1800px; /* Aumenta a largura máxima para acomodar duas colunas */
+    margin-top: 30px; /* Espaçamento entre o nav e o conteúdo */
+    margin-left: auto; /* NOVO: Centraliza o main-container */
+    margin-right: auto; /* NOVO: Centraliza o main-container */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Estilo para o container de login e registro */
+.login-container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px; /* Largura máxima para o formulário de login/registro */
+    text-align: center;
+    margin-top: 30px; /* Espaçamento entre o nav e o container de login */
+}
+
+/* Estilos para títulos */
+h1, h2, h3 { /* Incluído h3 */
+    color: #2c3e50; /* Cor escura para títulos */
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 600; /* Um pouco mais de peso na fonte */
+    font-family: 'Oswald', sans-serif;
+}
+
+/* Mensagens de boas-vindas */
+.welcome-message {
+    text-align: right;
+    margin-bottom: 20px;
+    font-size: 0.9em;
+    color: #666;
+}
+.welcome-message a {
+    color: #007bff;
+    text-decoration: none;
+}
+.welcome-message a:hover {
+    text-decoration: underline;
+}
+
+/* Mensagens Flash */
+.flashes {
+    list-style: none;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    text-align: center;
+    width: 100%; /* Garante que as mensagens flash ocupem a largura total */
+    max-width: 1200px; /* Limita a largura para não ficar muito esticado */
+    margin-left: auto; /* Centraliza */
+    margin-right: auto; /* Centraliza */
+}
+.flashes li {
+    margin-bottom: 5px;
+}
+.flashes .success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+.flashes .danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+.flashes .info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+.flashes .warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+
+/* Container para as duas seções (gerente e subordinado) */
+.content-wrapper {
+    display: flex;
+    flex-wrap: wrap; /* Permite que as colunas quebrem para a próxima linha em telas menores */
+    gap: 30px; /* Espaçamento entre as colunas */
+    justify-content: center;
+    align-items: flex-start; /* Alinha as seções ao topo */
+}
+
+.section {
+    background-color: #fcfcfc;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    flex: 1; /* Faz as seções ocuparem o espaço disponível */
+    min-width: 320px; /* Largura mínima ligeiramente ajustada para melhor responsividade */
+    max-width: 100%; /* Garante que não exceda a largura do pai */
+}
+
+/* Adicionado para a seção de visualização de ordens para lidar com overflow da tabela */
+.admin-orders-view, .subordinate-section-full {
+    overflow-x: auto; /* Adiciona barra de rolagem horizontal se o conteúdo for muito largo */
+}
+
+
+/* Estilo específico para a seção de subordinado quando ocupa a largura total */
+.subordinate-section-full {
+    flex-basis: 100%; /* Ocupa a largura total disponível */
+}
+
+/* Estilos para formulários (geral, login, registro) */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px; /* Espaçamento entre os elementos do formulário */
+    margin-bottom: 35px;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+/* Estilos para labels */
+label {
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 5px;
+    display: block; /* Garante que a label ocupe sua própria linha */
+    text-align: left; /* Alinha o texto da label à esquerda */
+}
+
+/* Estilos para inputs de texto, senha, data e textareas */
+input[type="text"],
+input[type="password"],
+input[type="date"],
+textarea,
+select { /* Adicionado select para o campo de role */
+    width: 100%; /* Definido como 100% para ocupar o espaço disponível */
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="date"]:focus,
+textarea:focus,
+select:focus { /* Adicionado select */
+    border-color: #007bff; /* Borda azul ao focar */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* Sombra suave ao focar */
+    outline: none; /* Remove o contorno padrão do navegador */
+}
+
+/* Estilos específicos para input de arquivo */
+input[type="file"] {
+    padding: 8px 0;
+}
+
+/* Estilos para botões */
+button {
+    background-color: #007bff; /* Azul primário */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.05em;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    align-self: flex-start; /* Alinha o botão à esquerda dentro do flex container */
+}
+
+button:hover {
+    background-color: #0056b3; /* Azul mais escuro ao passar o mouse */
+    transform: translateY(-2px); /* Efeito de "levantar" */
+}
+
+button:active {
+    transform: translateY(0); /* Retorna à posição original ao clicar */
+}
+
+/* Linha divisória */
+hr {
+    border: 0;
+    height: 1px;
+    background: #e0e0e0;
+    margin: 40px 0;
+}
+
+/* Estilos para a tabela de ordens de serviço */
+table {
+    width: 100%;
+    border-collapse: collapse; /* Remove espaçamento entre as bordas das células */
+    margin-top: 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Sombra leve na tabela */
+    border-radius: 8px; /* Cantos arredondados na tabela */
+    overflow: hidden; /* Garante que os cantos arredondados sejam visíveis */
+    table-layout: fixed; /* NOVO: Fixa o layout da tabela para evitar transbordamento */
+}
+
+/* Estilos para cabeçalhos da tabela */
+th, td {
+    padding: 15px;
+    border: 1px solid #e0e0e0; /* Borda suave */
+    text-align: left;
+    word-wrap: break-word; /* NOVO: Quebra palavras longas dentro das células */
+    overflow-wrap: break-word; /* Compatibilidade para word-wrap */
+}
+
+th {
+    background-color: #f5f5f5; /* Fundo claro para cabeçalhos */
+    font-weight: 600;
+    color: #444;
+    text-transform: uppercase; /* Texto em maiúsculas */
+    font-size: 0.9em;
+}
+
+/* Estilos para linhas alternadas da tabela */
+tr:nth-child(even) {
+    background-color: #f9f9f9; /* Fundo levemente diferente para linhas pares */
+}
+
+/* Estilos para botões de ação na tabela (ex: Deletar) */
+.button {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.85em;
+    text-align: center;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.delete-button {
+    background-color: #dc3545; /* Vermelho para deletar */
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: #c82333; /* Vermelho mais escuro ao passar o mouse */
+    transform: translateY(-1px);
+}
+
+/* Estilo para links de arquivo na tabela */
+td a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+td a:hover {
+    text-decoration: underline;
+}
+
+/* NOVOS ESTILOS PARA STATUS DA ORDEM */
+/* Linha da tabela para ordens atrasadas */
+tr.atrasado {
+    background-color: #ffe6e6; /* Fundo vermelho claro */
+    border-left: 5px solid #dc3545; /* Borda esquerda vermelha */
+}
+
+/* Linha da tabela para ordens entregues a tempo */
+tr.entregue-a-tempo {
+    background-color: #e6ffe6; /* Fundo verde claro */
+    border-left: 5px solid #28a745; /* Borda esquerda verde */
+}
+
+/* Estilo para o formulário de upload dentro da tabela */
+.upload-form {
+    display: flex; /* Make it a flex container */
+    flex-direction: row; /* Arrange items in a row */
+    align-items: center; /* Vertically align items in the center */
+    gap: 5px; /* Space between input and button */
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    margin-bottom: 0;
+    flex-wrap: wrap; /* Allow items to wrap to the next line if space is limited */
+}
+
+.upload-form input[type="file"] {
+    flex-grow: 1; /* Allow the input to grow and shrink */
+    min-width: 0; /* Allow the input to shrink below its content size */
+    padding: 0;
+    border: none;
+    font-size: 0.85em;
+    overflow: hidden; /* Hide overflowing text in the file input */
+    white-space: nowrap; /* Prevent text from wrapping */
+    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+}
+
+.upload-form button {
+    flex-shrink: 0; /* Prevent the button from shrinking */
+    padding: 6px 10px;
+    font-size: 0.8em;
+}
+
+/* Estilo para o link "Já possui uma conta?" ou "Ainda não possui login?" */
+.switch-link {
+    margin-top: 20px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.switch-link a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.switch-link a:hover {
+    text-decoration: underline;
+}
+
+/* --- ESTILOS DA BARRA DE NAVEGAÇÃO --- */
+.main-menu {
+    width: 100%; /* Garante que ocupe a largura total */
+    height: 15vh; /* Altura ajustada para ser menos intrusiva */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-family: system-ui, -apple-system, Helvetica, Arial, sans-serif;
+    background: #b1b1b1;
+    border-bottom: #b0ff1c 2px solid;
+    overflow-x: hidden;
+    z-index: 1000;
+    position: relative; /* Para posicionar o menu mobile */
+}
+
+.nav-list {
+    list-style: none;
+    display: flex;
+    margin: 0; /* Garante que não haja margem extra */
+    padding: 0; /* Garante que não haja padding extra */
+}
+
+.nav-list li {
+    letter-spacing: 3px;
+    margin-left: 32px;
+}
+
+.link-nav {
+    color: #ffffff;
+    text-decoration: none;
+    font-family: "Oswald", sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    transition: 0.3s;
+    white-space: nowrap; /* Evita quebra de linha em links do nav */
+}
+
+.link-nav:hover {
+    opacity: 0.7;
+}
+
+.image-logo {
+    height: 6vh; /* Altura ajustada para o novo nav */
+    transition: 0.3s;
+}
+
+.image-logo:hover {
+    opacity: 0.7;
+    transition: 0.3s;
+}
+
+.mobile-menu {
+    display: none;
+    cursor: pointer;
+}
+
+.mobile-menu div {
+    width: 32px;
+    height: 2px;
+    margin: 8px;
+    transition: 0.3s;
+    background-color: #b0ff1c;
+}
+
+/* BREAKROW - UNIDADES ESCOLARES (mantido conforme o seu código) */
+#break-school {
+    display: none;
+}
+
+@media (max-width: 1200px) and (min-width: 1000px){
+    #break-school {
+        display: block;
+    }
+}
+
+/* Media query para telas menores (menu mobile) */
+@media (max-width: 999px) {
+    .nav-list {
+        width: 100vw;
+        height: 60vh;
+        position: absolute;
+        top: 10.1vh; /* Ajustado para a nova altura do nav */
+        right: 0;
+        padding-bottom: 20px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+        border-bottom: #9acd32 2px solid;
+        transform: translateY(-140%);
+        transition: transform 0.4s ease-in;
+        background-color: #fcfcfc;
+        z-index: 99;
+    }
+
+    .nav-list li {
+        margin-left: 0;
+        opacity: 0;
+    }
+
+    .mobile-menu {
+        display: block;
+    }
+}
+
+.dropdown-menu{
+    display: none; /* Mantido se não for usado */
+}
+
+.nav-list.active {
+    transform: translateX(0);
+}
+
+@keyframes navLinkFade {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.mobile-menu.active .line1 {
+    transform: rotate(-45deg) translate(-8px, 8px);
+}
+
+.mobile-menu.active .line2 {
+    opacity: 0;
+}
+
+.mobile-menu.active .line3 {
+    transform: rotate(45deg) translate(-5px, -7px);
+}
+
+/* --- FIM DOS ESTILOS DA BARRA DE NAVEGAÇÃO --- */
+
+/* Responsividade para telas menores (geral do sistema) */
+@media (max-width: 768px) {
+    .main-container, .login-container {
+        padding: 15px; /* Reduz o padding em telas menores */
+    }
+
+    .content-wrapper {
+        flex-direction: column; /* Empilha as seções em telas menores */
+        gap: 20px;
+    }
+
+    .section {
+        min-width: unset; /* Remove o min-width para que seções ocupem 100% da largura disponível */
+        width: 100%; /* Garante que cada seção ocupe a largura total */
+    }
+
+    table, thead, tbody, th, td, tr {
+        display: block; /* Transforma a tabela em blocos para telas pequenas */
+    }
+
+    thead tr {
+        position: absolute;
+        top: -9999px; /* Esconde o cabeçalho original */
+        left: -9999px;
+    }
+
+    tr {
+        margin-bottom: 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    td {
+        border: none;
+        position: relative;
+        padding-left: 50%; /* Espaço para o label simulado */
+        text-align: right;
+    }
+
+    td::before {
+        content: attr(data-label); /* Usa o atributo data-label para criar um "cabeçalho" */
+        position: absolute;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+        color: #555;
+    }
+
+    /* Adiciona data-label aos TDs para responsividade */
+    td:nth-of-type(1):before { content: "ID:"; }
+    td:nth-of-type(2):before { content: "Descrição:"; }
+    td:nth-of-type(3):before { content: "Prazo:"; }
+    td:nth-of-type(4):before { content: "Atribuído a:"; }
+    td:nth-of-type(5):before { content: "Status:"; }
+    td:nth-of-type(6):before { content: "Anexo:"; }
+    td:nth-of-type(7):before { content: "Ações:"; }
+}
