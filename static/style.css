@@ -113,17 +113,18 @@ h1, h2, h3 { /* Incluído h3 */
 }
 
 
-/* Container para as duas seções (gerente e subordinado) */
+/* Container para as duas seções (gerente e usuário) */
 .content-wrapper {
     display: flex;
-    flex-wrap: wrap; /* Permite que as colunas quebrem para a próxima linha em telas menores */
+    flex-direction: column; /* Faz com que os itens fiquem um abaixo do outro */
+    flex-wrap: wrap; 
     gap: 30px; /* Espaçamento entre as colunas */
     justify-content: center;
-    align-items: flex-start; /* Alinha as seções ao topo */
+    align-items: stretch; /* Centraliza os contêineres na página */
 }
 
 .section {
-    background-color: #fcfcfc;
+    background-color: #f7f7f7;
     padding: 25px;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -162,6 +163,67 @@ label {
     margin-bottom: 5px;
     display: block; /* Garante que a label ocupe sua própria linha */
     text-align: left; /* Alinha o texto da label à esquerda */
+}
+
+/* Estilos para o grupo de checkboxes */
+.checkbox-group {
+    display: grid; /* Alterado para Grid */
+    grid-template-columns: repeat(2, 1fr); /* Cria 2 colunas de largura igual */
+    gap: 10px; /* Espaçamento entre os itens */
+    margin-bottom: 15px;
+    max-height: 150px; 
+    overflow-y: auto; 
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-item input[type="checkbox"] {
+    margin-right: 10px;
+    /* Redefine a largura para o tamanho natural do checkbox */
+    width: auto; 
+}
+
+.checkbox-item label {
+    margin-bottom: 0;
+    font-weight: normal;
+}
+
+/* Estilos para a lista de usuários */
+.user-list {
+    margin-top: 15px;
+}
+
+.user-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.user-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.user-list-item:last-child {
+    border-bottom: none;
+}
+
+.user-list-item span {
+    font-weight: 500;
+}
+
+.user-list-item .delete-button {
+    font-size: 0.8em;
+    padding: 6px 12px;
 }
 
 /* Estilos para inputs de texto, senha, data e textareas */
