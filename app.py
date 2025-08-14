@@ -226,12 +226,65 @@ def admin_create_subordinate():
         flash(f"Usuário '{username}' já existe.", 'danger')
         return redirect(url_for('create_subordinate_page'))
 
+@app.route('/admin/delete_user/<string:username>')
+@admin_required
+def delete_user(username):
+    # Verifica se o usuário a ser deletado possui solicitações associadas
+    has_tasks = db.session.execute(db.select(Solicitacao).filter_by(assigned_to_username=username)).first()
+    
+    if has_tasks:
+        flash(f"Não é possível excluir o usuário '{username}', pois ele possui solicitações de serviço ativas. Reatribua ou delete as solicitações primeiro.", "danger")
+        return redirect(url_for('admin_dashboard'))
+
+    # Se não houver tarefas, prossegue com a exclusão
+    user_to_delete = db.session.execute(
+        db.select(Usuario).filter_by(username=username, role='subordinado')
+    ).scalar_one_or_none()
+
+    if user_to_delete:
+        db.session.delete(user_to_delete)
+        db.session.commit()
+        flash(f"Usuário '{username}' foi excluído com sucesso.", "success")
+    else:
+        flash("Usuário não encontrado.", "warning")
+        
+    return redirect(url_for('admin_dashboard'))
+# @app.route('/adicionar_solicitacao', methods=['POST'])
+# @admin_required
+# def adicionar_solicitacao():
+#     descricao = request.form['descricao']
+#     prazo_str = request.form['prazo']
+#     assigned_to = request.form['assigned_to_username']
+
+#     try:
+#         prazo = datetime.strptime(prazo_str, '%Y-%m-%d').date()
+#     except ValueError:
+#         flash("Formato de data inválido. Use AAAA-MM-DD.", "danger")
+#         return redirect(url_for('admin_dashboard'))
+
+#     nova_solicitacao = Solicitacao(
+#         descricao=descricao,
+#         prazo=prazo,
+#         assigned_to_username=assigned_to
+#     )
+    
+#     db.session.add(nova_solicitacao)
+#     db.session.commit()
+#     flash("Nova solicitacao de serviço adicionada com sucesso.", "success")
+#     return redirect(url_for('admin_dashboard'))
+
 @app.route('/adicionar_solicitacao', methods=['POST'])
 @admin_required
 def adicionar_solicitacao():
     descricao = request.form['descricao']
     prazo_str = request.form['prazo']
-    assigned_to = request.form['assigned_to_username']
+    # Utiliza getlist para obter todos os usernames selecionados
+    assigned_to_list = request.form.getlist('assigned_to_usernames')
+
+    # Valida se pelo menos um usuário foi selecionado
+    if not assigned_to_list:
+        flash("Você deve atribuir a solicitação a pelo menos um usuário.", "warning")
+        return redirect(url_for('admin_dashboard'))
 
     try:
         prazo = datetime.strptime(prazo_str, '%Y-%m-%d').date()
@@ -239,15 +292,17 @@ def adicionar_solicitacao():
         flash("Formato de data inválido. Use AAAA-MM-DD.", "danger")
         return redirect(url_for('admin_dashboard'))
 
-    nova_solicitacao = Solicitacao(
-        descricao=descricao,
-        prazo=prazo,
-        assigned_to_username=assigned_to
-    )
+    # Itera sobre la lista de usuários e cria uma solicitação para cada um
+    for username in assigned_to_list:
+        nova_solicitacao = Solicitacao(
+            descricao=descricao,
+            prazo=prazo,
+            assigned_to_username=username
+        )
+        db.session.add(nova_solicitacao)
     
-    db.session.add(nova_solicitacao)
     db.session.commit()
-    flash("Nova solicitacao de serviço adicionada com sucesso.", "success")
+    flash("Solicitação enviada com sucesso para o(s) usuário(s) selecionado(s).", "success")
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/deletar_solicitacao/<int:id>')
@@ -321,4 +376,4 @@ if __name__ == '__main__':
         pass
     # Em um ambiente de produção, use um servidor WSGI como Gunicorn ou Waitress
     # e remova debug=True
-    app.run(host='0.0.0.0', debug=True)
+    app.run(debug=True)
