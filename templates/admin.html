@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Oswald:wght@200..700&family=Radio+Canada:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
 
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/logotipo-sme.png') }}" type="image/x-icon">
 </head>
 <body>
     <nav class="main-menu">
@@ -21,7 +22,7 @@
             <div class="line3"></div>
         </div>
         <ul class="nav-list">
-            <li><a href="{{ url_for('admin_dashboard') }}" class="link-nav">Início</a></li>
+            <!--<li><a href="{{ url_for('admin_dashboard') }}" class="link-nav">Início</a></li>-->
             <li><a href="{{ url_for('logout') }}" class="link-nav">Sair</a></li>
         </ul>
     </nav>
@@ -50,13 +51,17 @@
                     <label for="prazo">Prazo:</label>
                     <input type="date" id="prazo" name="prazo" required>
 
-                    <label for="assigned_to_username">Atribuir a:</label>
-                    <select id="assigned_to_username" name="assigned_to_username" required>
-                        <option value="">Selecione um usuário</option>
+                    <label>Atribuir a:</label>
+                    <div class="checkbox-group">
                         {% for sub in subordinates %}
-                        <option value="{{ sub }}">{{ sub }}</option>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="user-{{ loop.index }}" name="assigned_to_usernames" value="{{ sub }}">
+                            <label for="user-{{ loop.index }}">{{ sub }}</label>
+                        </div>
+                        {% else %}
+                        <p>Nenhum usuário encontrado.</p>
                         {% endfor %}
-                    </select>
+                    </div>
                     
                     <button type="submit">Criar Solicitação</button>
                 </form>
@@ -64,7 +69,28 @@
             
             <div class="section">
                 <h2 style="margin-bottom: 15px;">Gerenciar Usuários</h2>
-                <a href="{{ url_for('create_subordinate_page') }}" class="button" style="display: block; text-align: center; margin-bottom: 20px;">Criar Novo Usuário</a>
+                <div class="section manager-section">
+                    <a href="{{ url_for('create_subordinate_page') }}" class="button" style="display: block; text-align: center; margin-bottom: 20px;">Criar Novo Usuário</a>
+
+                    <h3 style="margin-top: 20px; text-align: left; font-size: 1.2em;">Usuários Existentes</h3>
+                    <div class="user-list">
+                        {% if subordinates %}
+                            <ul>
+                                {% for sub in subordinates %}
+                                <li class="user-list-item">
+                                    <span>{{ sub }}</span>
+                                    <a href="{{ url_for('delete_user', username=sub) }}" class="button delete-button"
+                                    onclick="return confirm('Tem certeza que deseja excluir o usuário \'{{ sub }}\'? Esta ação não pode ser desfeita.');">
+                                    Excluir
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>Nenhum usuário encontrado.</p>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
 
