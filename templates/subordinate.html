@@ -28,7 +28,7 @@
     </nav>
 
     <div class="main-container">
-        <h1>Painel Principal do Usuário</h1>
+        <h1>Painel Principal do Usuário </h1>
         <p class="welcome-message">Bem-vindo, {{ session.username }}! (<a href="/logout">Sair</a>)</p>
 
         <!-- Mensagens Flash (sucesso, erro, info) -->
@@ -45,8 +45,8 @@
         <div class="content-wrapper">
             <!-- Seção para o SUBORDINADO - Envio de Arquivos -->
             <div class="section subordinate-section-full">
-                <h2>Minhas Ordens para Envio</h2>
-                {% if ordens %}
+                <h2>Minhas Solicitações para Envio</h2>
+                {% if solicitacao %}
                     <table>
                         <thead>
                             <tr>
@@ -59,23 +59,23 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for ordem in ordens %}
-                            <tr class="{{ ordem.status_class }}">
-                                <td>{{ ordem.id }}</td>
-                                <td>{{ ordem.descricao }}</td>
-                                <td>{{ ordem.prazo }}</td>
-                                <td>{{ ordem.assigned_to_username or 'Não atribuído' }}</td>
-                                <td>{{ ordem.status }}</td>
+                            {% for solicitacao in solicitacao %}
+                            <tr class="{{ solicitacao.status_class }}">
+                                <td>{{ solicitacao.id }}</td>
+                                <td>{{ solicitacao.descricao }}</td>
+                                <td>{{ solicitacao.prazo }}</td>
+                                <td>{{ solicitacao.assigned_to_username or 'Não atribuído' }}</td>
+                                <td>{{ solicitacao.status }}</td>
                                 <td>
-                                    {% if not ordem.google_drive_file_id %}
+                                    {% if not solicitacao.google_drive_file_id %}
                                         <!-- Formulário para o subordinado enviar o arquivo -->
-                                        <form action="/upload_arquivo/{{ ordem.id }}" method="post" enctype="multipart/form-data" class="upload-form">
+                                        <form action="/upload_arquivo/{{ solicitacao.id }}" method="post" enctype="multipart/form-data" class="upload-form">
                                             <input type="file" name="arquivo" required>
                                             <button type="submit">Enviar</button>
                                         </form>
                                     {% else %}
                                         <!-- Link para o subordinado ver/baixar o arquivo que ele já enviou -->
-                                        <a href="{{ ordem.download_link }}" target="_blank">Anexo Enviado</a>
+                                        <a href="{{ solicitacao.download_link }}" target="_blank">Anexo Enviado</a>
                                     {% endif %}
                                 </td>
                             </tr>
@@ -83,7 +83,7 @@
                         </tbody>
                     </table>
                 {% else %}
-                    <p>Nenhuma ordem de serviço pendente para envio.</p>
+                    <p>Nenhuma solicitacao de serviço pendente para envio.</p>
                 {% endif %}
             </div>
         </div>
