@@ -407,4 +407,5 @@ if __name__ == '__main__':
         pass
     # Em um ambiente de produção, use um servidor WSGI como Gunicorn ou Waitress
     # e remova debug=True
-    app.run(debug=True)
+
+    app.run(host='0.0.0.0', debug=True)
