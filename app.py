@@ -370,6 +370,7 @@ def uploaded_file(filename):
 
 # --- Ponto de Partida da Aplicação ---
 if __name__ == '__main__':
+    app.run(host='0.0.0.0')
     with app.app_context():
         # Descomente a linha abaixo na primeira vez que rodar para criar as tabelas
         # db.create_all()
