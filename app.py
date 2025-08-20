@@ -1,5 +1,7 @@
 # --- Importações de Ferramentas ---
 import os
+import boto3
+from botocore.exceptions import ClientError
 from datetime import datetime, date
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -18,21 +20,27 @@ DB_HOST = "gsme-database.catcqusiwhir.us-east-1.rds.amazonaws.com"
 DB_PORT = "3306"
 DB_NAME = "gsme"
 
+# --- Configuração do AWS S3 ---
+S3_BUCKET = "gsme-documents"
+S3_REGION = "us-east-1"
+S3_LOCATION = f"https://{S3_BUCKET}.s3.amazonaws.com/"
+
 # --- Configuração do SQLAlchemy ---
 app.config['SECRET_KEY'] = 'gK4bV7cZ2xN1mS6jH8fD3aT'
 # A string de conexão é montada com os dados acima
 app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = 'uploads'
 
 ADMIN_ACCESS_KEY = "SMEitace06"
-
-# Garante que a pasta 'uploads' exista
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Inicializa a extensão SQLAlchemy
 db = SQLAlchemy(app)
 
+# Inicializa o cliente Boto3 para o S3
+s3 = boto3.client(
+   "s3",
+   region_name=S3_REGION
+)
 
 # --- Modelos de Banco de Dados (Tabelas) ---
 class Usuario(db.Model):
@@ -120,7 +128,8 @@ def processar_solicitacao(solicitacao_obj):
         solicitacao_dict['status_class'] = 'atrasado'
     
     if solicitacao_obj.arquivo_path:
-        solicitacao_dict['download_link'] = url_for('uploaded_file', filename=os.path.basename(solicitacao_obj.arquivo_path))
+        # LINHA ALTERADA AQUI:
+        solicitacao_dict['download_link'] = url_for('download_file', filename=solicitacao_obj.arquivo_path)
         
     return solicitacao_dict
 
@@ -310,15 +319,16 @@ def adicionar_solicitacao():
 def deletar_solicitacao(id):
     solicitacao_para_deletar = db.get_or_404(Solicitacao, id)
     
-    if solicitacao_para_deletar.arquivo_path and os.path.exists(solicitacao_para_deletar.arquivo_path):
+    # Se existe um caminho de arquivo, tenta deletá-lo do S3
+    if solicitacao_para_deletar.arquivo_path:
         try:
-            os.remove(solicitacao_para_deletar.arquivo_path)
-        except OSError as e:
-            flash(f"Erro ao deletar arquivo associado: {e}", "danger")
+            s3.delete_object(Bucket=S3_BUCKET, Key=solicitacao_para_deletar.arquivo_path)
+        except ClientError as e:
+            flash(f"Erro ao deletar arquivo do S3: {e}. A solicitação foi removida, mas o arquivo pode ter permanecido no bucket.", "danger")
             
     db.session.delete(solicitacao_para_deletar)
     db.session.commit()
-    flash("solicitacao de serviço deletada com sucesso.", "success")
+    flash("Solicitação de serviço deletada com sucesso.", "success")
     return redirect(url_for('admin_dashboard'))
 
 # --- Rotas Exclusivas do Subordinado ---
@@ -346,26 +356,47 @@ def upload_arquivo(id):
     ).scalar_one_or_none()
 
     if not solicitacao:
-        flash("solicitacao de serviço não encontrada ou não pertence a você.", "danger")
+        flash("Solicitação de serviço não encontrada ou não pertence a você.", "danger")
         return redirect(url_for('subordinate_dashboard'))
     
-    filename = f"{id}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{arquivo.filename}"
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    arquivo.save(filepath)
+    # Gera um nome de arquivo seguro e único para o S3
+    filename = f"solicitacao_{id}/{datetime.now().strftime('%Y%m%d%H%M%S')}_{arquivo.filename}"
 
-    solicitacao.arquivo_path = filepath
+    try:
+        s3.upload_fileobj(
+            arquivo,
+            S3_BUCKET,
+            filename,
+            ExtraArgs={
+                "ContentType": arquivo.content_type
+            }
+        )
+    except ClientError as e:
+        flash(f"Erro ao enviar arquivo para o S3: {e}", "danger")
+        return redirect(url_for('subordinate_dashboard'))
+
+    # Salva apenas o nome do arquivo (chave do objeto S3) no banco de dados
+    solicitacao.arquivo_path = filename
     solicitacao.status = 'Entregue'
     solicitacao.data_entrega = date.today()
     
     db.session.commit()
-    flash("Arquivo enviado e solicitacao marcada como 'Entregue'.", "success")
+    flash("Arquivo enviado e solicitação marcada como 'Entregue'.", "success")
     return redirect(url_for('subordinate_dashboard'))
 
 # --- Rota para Download de Arquivos ---
-@app.route('/uploads/<filename>')
+@app.route('/download/<path:filename>')
 @login_required
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
+def download_file(filename):
+    try:
+        url = s3.generate_presigned_url('get_object',
+                                        Params={'Bucket': S3_BUCKET, 'Key': filename},
+                                        ExpiresIn=3600) # URL válida por 1 hora
+        # Redireciona o navegador para a URL segura do S3, que iniciará o download
+        return redirect(url)
+    except ClientError as e:
+        flash(f"Não foi possível gerar o link para download: {e}", "danger")
+        return redirect(request.referrer or url_for('home'))
 
 
 # --- Ponto de Partida da Aplicação ---
