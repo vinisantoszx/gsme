@@ -21,7 +21,7 @@ DB_PORT = "3306"
 DB_NAME = "gsme"
 
 # --- Configuração do AWS S3 ---
-S3_BUCKET = "gsme-documents"
+S3_BUCKET = "gsme-documets"
 S3_REGION = "us-east-1"
 S3_LOCATION = f"https://{S3_BUCKET}.s3.amazonaws.com/"
 
@@ -401,7 +401,6 @@ def download_file(filename):
 
 # --- Ponto de Partida da Aplicação ---
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
     with app.app_context():
         # Descomente a linha abaixo na primeira vez que rodar para criar as tabelas
         # db.create_all()
